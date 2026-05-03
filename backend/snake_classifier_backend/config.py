@@ -69,3 +69,11 @@ CORS_ORIGINS = ["*"]    # Tighten in production if needed
 # ---------------------------------------------------------------------------
 MAX_FILE_SIZE_MB = 10
 ALLOWED_EXTENSIONS = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
+
+
+# ---------------------------------------------------------------------------
+# Model Source 
+# ---------------------------------------------------------------------------
+
+MODEL_HF_ID = os.environ.get("MODEL_HF_ID","")
+MODEL_FILENAME= os.environ.get("MODEL_FILENAME","venom.pt")

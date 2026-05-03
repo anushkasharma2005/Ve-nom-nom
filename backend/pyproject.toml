@@ -13,6 +13,7 @@ dependencies = [
     "Pillow>=10.3.0",
     "google-generativeai>=0.7.0",
     "pydantic>=2.7.0",
+    "huggingface_hub>=0.18.0",
 ]
 
 [project.optional-dependencies]
