@@ -1,0 +1,45 @@
+# =============================================================================
+# .github/workflows/deploy.yml
+# On every push to main, sync the repo to your Hugging Face Space.
+# 
+# Required GitHub Secrets (Settings → Secrets → Actions):
+#   HF_TOKEN   — your HF write token (https://huggingface.co/settings/tokens)
+#   HF_SPACE   — your space in the format  username/space-name
+# =============================================================================
+
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - main          # triggers on every push to main
+
+jobs:
+  deploy:
+    name: Push to HF Space
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # full history needed for git push
+
+      # 2. Configure git identity
+      - name: Configure git
+        run: |
+          git config --global user.email "ci@github-actions"
+          git config --global user.name  "GitHub Actions"
+
+      # 3. Add the HF Space as a remote and force-push
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ secrets.HF_SPACE }}        # e.g.  yourname/venomScan
+        run: |
+          # Build the authenticated remote URL
+          HF_REMOTE="https://user:${HF_TOKEN}@huggingface.co/spaces/${HF_SPACE}"
+
+          git remote add hf "$HF_REMOTE" || git remote set-url hf "$HF_REMOTE"
+          git push hf main --force
