@@ -9,7 +9,9 @@ import torch
 import torch.nn as nn
 from torchvision import transforms, models
 from PIL import Image
-
+import os
+import shutil
+from huggingface_hub import hf_hub_download
 import snake_classifier_backend.config as config
 
 logger = logging.getLogger(__name__)
@@ -92,7 +94,18 @@ class SnakeClassifier:
 
     def _try_load(self) -> None:
         model_path: Path = config.MODEL_PATH
+        
+        if not model_path.exists() and config.MODEL_HF_ID:
+            token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_HUB_TOKEN")
+            try:
+                hf_file = hf_hub_download(repo_id=config.MODEL_HF_ID, filename=config.MODEL_FILENAME, token=token)
+                model_path.parent.mkdir(parent=True, exist_ok=True)
+                shutil.copy(hf_file,model_path)
+                logger.infor("Downloaded model from HF repo %s to %s", config.MODEL_HF_ID, model_path)
+            except Exception as exc:
+                logger.warning("Could not download model from HF repo %s:%s", config.MODEL_HF_ID, exc)
 
+        
         if not model_path.exists():
             msg = f"Model file not found at '{model_path}'. Place venom.pt in backend/models/."
             logger.error(msg)
