@@ -39,8 +39,11 @@ COPY backend/ ./
 COPY --from=frontend-builder /build/backend/static ./static
 
 # Install Python deps with uv (no venv — container is isolated)
-RUN uv pip install --system --no-cache -r <(uv pip compile pyproject.toml)
+# RUN uv pip install --system --no-cache -r <(uv pip compile pyproject.toml)
+RUN uv pip compile pyproject.toml -o /tmp/requirements.txt \
+    && uv pip install --system --no-cache -r /tmp/requirements.txt
 
+    
 # HF Spaces: non-root user for security
 RUN useradd -m appuser && chown -R appuser /app
 USER appuser
