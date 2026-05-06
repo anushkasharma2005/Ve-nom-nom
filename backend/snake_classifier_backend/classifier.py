@@ -101,7 +101,7 @@ class SnakeClassifier:
                 hf_file = hf_hub_download(repo_id=config.MODEL_HF_ID, filename=config.MODEL_FILENAME, token=token)
                 model_path.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy(hf_file,model_path)
-                logger.infor("Downloaded model from HF repo %s to %s", config.MODEL_HF_ID, model_path)
+                logger.info("Downloaded model from HF repo %s to %s", config.MODEL_HF_ID, model_path)
             except Exception as exc:
                 logger.warning("Could not download model from HF repo %s:%s", config.MODEL_HF_ID, exc)
 
