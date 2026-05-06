@@ -7,17 +7,25 @@ import logging
 import re
 from pathlib import Path
 
-import google.generativeai as genai
+# import google.generativeai as genai
+import google.genai as genai  
 
 import snake_classifier_backend.config as config
 
 logger = logging.getLogger(__name__)
 
 # Configure Gemini client once
+# if config.GEMINI_API_KEY:
+#     genai.configure(api_key=config.GEMINI_API_KEY)
+# else:
+#     logger.warning("GEMINI_API_KEY is not set — enrichment will return placeholders.")
+
 if config.GEMINI_API_KEY:
-    genai.configure(api_key=config.GEMINI_API_KEY)
+    _client = genai.Client(api_key=config.GEMINI_API_KEY)  # ← Create client once
 else:
+    _client = None
     logger.warning("GEMINI_API_KEY is not set — enrichment will return placeholders.")
+
 
 # ---------------------------------------------------------------------------
 # Cache helpers
@@ -69,14 +77,25 @@ Respond with ONLY the raw JSON object. No explanation, no markdown fences.
 
 def _call_gemini(label: str, is_venomous: bool, confidence: float) -> dict:
     """Call Gemini and parse the JSON response."""
+
+    if not _client:
+        raise ValueError("Gemini client not initialized")
+
+    
     prompt = _PROMPT_TEMPLATE.format(
         label=label,
         is_venomous=is_venomous,
         confidence=confidence,
     )
 
-    model = genai.GenerativeModel(config.GEMINI_MODEL)
-    response = model.generate_content(prompt)
+    # model = genai.GenerativeModel(config.GEMINI_MODEL)
+    # response = model.generate_content(prompt)
+
+    response = _client.models.generate_content(
+        model=f"models/{config.GEMINI_MODEL}",
+        contents=prompt
+    )
+    
     raw = response.text.strip()
 
     # Strip accidental markdown fences if Gemini adds them
