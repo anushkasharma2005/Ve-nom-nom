@@ -12,6 +12,7 @@ dependencies = [
     "torchvision>=0.18.0",
     "Pillow>=10.3.0",
     "google-generativeai>=0.7.0",
+    "google-genai>=0.1.0", 
     "pydantic>=2.7.0",
     "huggingface_hub>=0.18.0",
 ]
