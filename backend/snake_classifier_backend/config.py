@@ -55,7 +55,7 @@ CONFIDENCE_THRESHOLD = 0.65
 # Gemini API
 # ---------------------------------------------------------------------------
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")  # Set via env / HF Secret
-GEMINI_MODEL   = "gemini-1.5-pro"                    # Fast & cheap for enrichment
+GEMINI_MODEL   = "gemini-2.0-flash"                    # Fast & cheap for enrichment
 
 # ---------------------------------------------------------------------------
 # FastAPI Server
