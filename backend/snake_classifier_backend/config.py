@@ -38,12 +38,12 @@ NORMALIZE_STD  = [0.229, 0.224, 0.225]
 # Index must match the class indices used during training.
 # ---------------------------------------------------------------------------
 CLASS_LABELS = {
-    0: "Venomous",
-    1: "Non-Venomous",
+    1: "Venomous",
+    0: "Non-Venomous",
 }
 
-# Whether class 0 is the venomous one (used for first-aid logic)
-VENOMOUS_CLASS_INDEX = 0
+# Whether class 1 is the venomous one (used for first-aid logic)
+VENOMOUS_CLASS_INDEX = 1
 
 # ---------------------------------------------------------------------------
 # Inference
