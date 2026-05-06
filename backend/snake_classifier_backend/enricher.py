@@ -20,6 +20,29 @@ logger = logging.getLogger(__name__)
 # else:
 #     logger.warning("GEMINI_API_KEY is not set — enrichment will return placeholders.")
 
+
+
+_LOCAL_FACTS = {
+    "venomous": {
+        "species_guess": "King Cobra",
+        "fun_fact": "Can rear up to 6 feet high when threatened.",
+        "iucn_status": "VU",
+        "conservation_note": "Listed as Vulnerable due to habitat loss.",
+        "first_aid_tip": "Seek immediate medical attention.",
+        "danger_level": "Extreme"
+    },
+    "non-venomous": {
+        "species_guess": "Rat Snake",
+        "fun_fact": "Excellent rodent hunters, beneficial to humans.",
+        "iucn_status": "LC",
+        "conservation_note": "Least Concern, adaptable species.",
+        "first_aid_tip": "",
+        "danger_level": "Low"
+    }
+}
+
+
+
 if config.GEMINI_API_KEY:
     _client = genai.Client(api_key=config.GEMINI_API_KEY)  # ← Create client once
 else:
@@ -136,30 +159,36 @@ def get_enrichment(label: str, is_venomous: bool, confidence: float) -> dict:
         dict with species_guess, fun_fact, iucn_status, conservation_note,
              first_aid_tip, danger_level
     """
-    global _cache
+    # global _cache
 
-    # Load cache from disk on first call
-    if _cache is None:
-        _cache = _load_cache()
+    # # Load cache from disk on first call
+    # if _cache is None:
+    #     _cache = _load_cache()
 
-    # Cache key — based on label only (confidence doesn't change facts)
-    cache_key = label.lower().replace(" ", "_")
+    # # Cache key — based on label only (confidence doesn't change facts)
+    # cache_key = label.lower().replace(" ", "_")
 
-    if cache_key in _cache:
-        logger.debug("Cache hit for key '%s'.", cache_key)
-        return _cache[cache_key]
+    # if cache_key in _cache:
+    #     logger.debug("Cache hit for key '%s'.", cache_key)
+    #     return _cache[cache_key]
 
-    if not config.GEMINI_API_KEY:
-        logger.warning("No Gemini key — returning placeholder enrichment.")
-        return _PLACEHOLDER.copy()
+    # if not config.GEMINI_API_KEY:
+    #     logger.warning("No Gemini key — returning placeholder enrichment.")
+    #     return _PLACEHOLDER.copy()
 
-    try:
-        data = _call_gemini(label, is_venomous, confidence)
-        _cache[cache_key] = data
-        _save_cache(_cache)
-        logger.info("Gemini enrichment fetched and cached for '%s'.", cache_key)
-        return data
+    # try:
+    #     data = _call_gemini(label, is_venomous, confidence)
+    #     _cache[cache_key] = data
+    #     _save_cache(_cache)
+    #     logger.info("Gemini enrichment fetched and cached for '%s'.", cache_key)
+    #     return data
 
-    except Exception as exc:
-        logger.error("Gemini call failed: %s — returning placeholder.", exc)
-        return _PLACEHOLDER.copy()
+    # except Exception as exc:
+    #     logger.error("Gemini call failed: %s — returning placeholder.", exc)
+    #     return _PLACEHOLDER.copy()
+
+
+    key = "venomous" if is_venomous else "non-venomous"
+    return _LOCAL_FACTS.get(key, _PLACEHOLDER.copy())
+
+
