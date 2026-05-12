@@ -79,9 +79,6 @@ python main.py
 # → Docs at         http://localhost:7860/docs
 ```
 
-generates api lol
-$env:GEMINI_API_KEY="AIzaSyCRHHSfFXOoPWKsPzbeP_zJ_0MnTUFf7Wc"
-
 ---
 
 ### 2 — Frontend
